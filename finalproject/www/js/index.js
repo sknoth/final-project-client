@@ -47,3 +47,53 @@ var app = {
         console.log('Received Event: ' + id);
     }
 };
+
+var cors_api_url = 'https://vukn-final-project.herokuapp.com/';
+
+function doCORSRequest(options, printResult) {
+
+  var x = new XMLHttpRequest();
+
+  x.open('GET', cors_api_url + options.url, true);
+
+  x.setRequestHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin");
+  x.setRequestHeader("Access-Control-Allow-Headers", "X-Requested-With");
+  x.setRequestHeader("Access-Control-Allow-Origin", "*");
+  x.setRequestHeader("X-Requested-With", "*");
+
+  x.onreadystatechange = function() {
+    if (x.readyState === 4) {
+      printResult(
+        (x.responseText || '')
+      );
+    }
+  };
+
+  x.send();
+}
+
+// Bind event
+(function() {
+  document.getElementById('get').onclick = function(e) {
+    e.preventDefault();
+    doCORSRequest({
+      method: 'GET',
+      url: 'data',
+      data: 'meh'
+    }, function printResult(result) {
+      console.log(111,result);
+      location.pathname = 'create-profile.html';
+    });
+  };
+
+  document.getElementById('fb').onclick = function(e) {
+    e.preventDefault();
+    doCORSRequest({
+      method: 'GET',
+      url: 'auth/facebook'
+    }, function printResult(result) {
+      console.log(222,result);
+      location.pathname = 'create-profile.html';
+    });
+  };
+})();
