@@ -126,7 +126,6 @@ console.log('app.currentUser', app.currentUser);
 
     onCreateProfile: function() {
       console.log('onCreateProfile');
-      console.log(e);
       app.currentUser.name = document.getElementById("name").value;
       app.currentUser.quote = document.getElementById("quote").value;
 
