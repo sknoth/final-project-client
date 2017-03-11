@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "uID": 0,
+      "email": "example@mail.com",
+      "password": "secret",
+      "languages":[ "de", "en", "ar" ],
+      "questions": [
+        {
+          "qID": 0,
+          "selectedAnswer": 2
+        },{
+          "qID": 1,
+          "selectedAnswer": 1
+        },{
+          "qID": 2,
+          "selectedAnswer": 3
+        }
+      ]
+    }
+  ]
+}

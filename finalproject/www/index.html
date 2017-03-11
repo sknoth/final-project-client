@@ -19,13 +19,34 @@
 -->
 <html>
     <head>
-        <link id="app" rel="import" href="/imports/app.html">
+      <!--
+      Customize this policy to fit your own app's needs. For more guidance, see:
+      https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+      Some notes:
+      * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+      * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+      * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+      * Enable inline JS: add 'unsafe-inline' to default-src
+      -->
+      <meta http-equiv="Content-Security-Policy"
+        content="default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+      <meta name="format-detection" content="telephone=no">
+      <meta name="msapplication-tap-highlight" content="no">
+      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+      <title>Friend Caching</title>
+
+      <link id="messages" rel="import" href="/imports/messages.html">
+      <link id="create-profile" rel="import" href="/imports/create-profile.html">
+
+      <link rel="stylesheet" type="text/css" href="css/material-foundation.css">
+      <link rel="stylesheet" type="text/css" href="css/index.css">
     </head>
     <body>
-      <h1 class="text-display-3">Friend Caching</h1>
+      <h1 class="text-display-3">Friend Cachingg</h1>
       <h1 class="text-headline">"Cache your friends and find treasures"</h1>
 
-      <a href="/auth/facebook" id="fb" class="raised-button ink"><span class="fa fa-facebook"></span> Facebook</a>
+      <a onclick="app.onFacebookConnect()" class="raised-button ink">Facebook</a>
       <a href="/auth/twitter" class="raised-button ink"><span class="fa fa-twitter"></span> Twitter</a>
       <p>or</p>
       <div class="row column">
@@ -37,23 +58,11 @@
         <label for="email" class="floating-label">Password</label>
       </div>
       <div class="row column">
-        <a id="get" class="raised-button ink">Sign Up</a>
+        <a id="signupBtn" class="raised-button ink">Sign Up</a>
       </div>
     </body>
-
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="js/material-foundation.js"></script>
-
-    <script>
-      var headElements = document.getElementById('app').import.childNodes[2].childNodes[0].childNodes;
-
-      for (el in headElements) {
-        console.log(headElements[el]);
-        document.head.appendChild(headElements[el]);
-      }
-
-      document.head.appendChild(htmlDoc);
-    </script>
 </html>

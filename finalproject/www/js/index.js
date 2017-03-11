@@ -17,8 +17,13 @@
  * under the License.
  */
 var app = {
+
+    cors_api_url: 'https://vukn-final-project.herokuapp.com/',
+    currentUser: {},
+
     // Application Constructor
     initialize: function() {
+      console.log('app initialize');
         this.bindEvents();
     },
     // Bind Event Listeners
@@ -27,73 +32,116 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
     },
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        // do something only after device is ready
     },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+    onFacebookConnect: function() {
+      console.log('onFacebookConnect');
+      app.doCORSRequest({
+        method: 'GET',
+        url: 'auth/facebook'
+      }, function printResult(result) {
+        console.log('onFacebookConnect result',result);
+      });
+    },
 
-        console.log('Received Event: ' + id);
+    onSignUp: function() {
+      console.log('onSignUp');
+
+      var x = new XMLHttpRequest();
+
+      x.open('POST', app.cors_api_url + 'signup', true);
+      x.setRequestHeader("Content-type", "application/json");
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('success');
+              console.log(x.responseText);
+              // console.log(x.responseText.passport.user);
+              app.navigateTo('create-profile');
+              document.getElementById("createProfileBtn").addEventListener("click", app.onCreateProfile);
+
+              app.getUserData('58c424db6dc1810011757784');
+          }
+      }
+
+      x.send(JSON.stringify({
+        "email": document.getElementById("email").value,
+        "password": document.getElementById("password").value
+      }));
+
+    },
+
+    getUserData: function(uId) {
+      console.log('getUserData');
+      var x = new XMLHttpRequest();
+
+      x.open('GET', app.cors_api_url + 'users/' + uId, true);
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('getUserData success');
+              console.log(x.responseText);
+          }
+      }
+
+      x.send();
+
+    },
+
+    setUserData: function(uId) {
+      console.log('setUserData');
+
+      var x = new XMLHttpRequest();
+
+      x.open('POST', app.cors_api_url + 'users/' + uId, true);
+
+      x.setRequestHeader("Content-type", "application/json");
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('setUserData success');
+              console.log(x.responseText);
+          }
+      }
+console.log('app.currentUser', app.currentUser);
+      x.send(JSON.stringify({
+        "name": "meh",
+        "quote": "i wish"
+      }));
+    },
+
+    onCreateProfile: function() {
+      console.log('onCreateProfile');
+      console.log(e);
+      app.currentUser.name = document.getElementById("name").value;
+      app.currentUser.quote = document.getElementById("quote").value;
+
+      app.setUserData('58c424db6dc1810011757784');
+    },
+
+    navigateTo: function(page) {
+      console.log('navigateTo: ', page);
+      var htmlImport = document.getElementById(page).import.getElementById('page-' + page);
+
+      document.body.innerHTML = '';
+
+      document.body.appendChild(htmlImport);
     }
+
 };
 
-var cors_api_url = 'https://vukn-final-project.herokuapp.com/';
-
-function doCORSRequest(options, printResult) {
-
-  var x = new XMLHttpRequest();
-
-  x.open('GET', cors_api_url + options.url, true);
-
-  x.setRequestHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin");
-  x.setRequestHeader("Access-Control-Allow-Headers", "X-Requested-With");
-  x.setRequestHeader("Access-Control-Allow-Origin", "*");
-  x.setRequestHeader("X-Requested-With", "*");
-
-  x.onreadystatechange = function() {
-    if (x.readyState === 4) {
-      printResult(
-        (x.responseText || '')
-      );
-    }
-  };
-
-  x.send();
-}
-
-// Bind event
-(function() {
-  document.getElementById('get').onclick = function(e) {
-    e.preventDefault();
-    doCORSRequest({
-      method: 'GET',
-      url: 'data',
-      data: 'meh'
-    }, function printResult(result) {
-      console.log(111,result);
-      location.pathname = 'create-profile.html';
-    });
-  };
-
-  document.getElementById('fb').onclick = function(e) {
-    e.preventDefault();
-    doCORSRequest({
-      method: 'GET',
-      url: 'auth/facebook'
-    }, function printResult(result) {
-      console.log(222,result);
-      location.pathname = 'create-profile.html';
-    });
-  };
-})();
+app.initialize();

@@ -1,0 +1,16 @@
+{
+  "qID": 0,
+  "questionText": "What is your favourite color?",
+  "answers": [
+    {
+      "aID": 0,
+      "answerText": "red"
+    },{
+      "aID": 1,
+      "answerText": "green"
+    },{
+      "aID": 2,
+      "answerText": "blue"
+    }
+  ]
+}
