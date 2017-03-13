@@ -6,13 +6,13 @@
       <label for="email" class="floating-label">My name is:</label>
     </div>
     <div class="row column">
-      <input type="text" id="name" class="with-floating-label" required="">
+      <input type="text" id="studyProgram" class="with-floating-label">
       <label for="email" class="floating-label">I study:</label>
     </div>
     <div class="row column">
       <label>Select Country</label>
-      <select>
-        <option value="husker">Afghanistan</option>
+      <select id="country">
+        <option value="husker">Argentinia</option>
         <option value="starbuck">Bahamas</option>
         <option value="hotdog">Cambodia</option>
         <option value="hotdog">Denmark</option>
@@ -31,12 +31,16 @@
 
   	</div>
     <div class="row column">
-      <label>Multiple Select Menu</label>
-        <select multiple>
-          <option value="showboat">Showboat</option>
-          <option value="redwing">Redwing</option>
-          <option value="narcho">Narcho</option>
-          <option value="hardball">Hardball</option>
+      <label>I speak</label>
+        <select multiple id="languages">
+          <option value="showboat">Arabic</option>
+          <option value="redwing">Belgian</option>
+          <option value="narcho">Dutch</option>
+          <option value="hardball">English</option>
+          <option value="hardball">French</option>
+          <option value="hardball">German</option>
+          <option value="hardball">Hungarian</option>
+          <option value="hardball">Islandic</option>
         </select>
     </div>
     <div class="row column">
@@ -48,8 +52,7 @@
       <textarea id="quote" placeholder="Don't worry - be happy!"></textarea>
     </div>
     <div class="row column">
-      <a href="answer-questions.html" class="raised-button ink">Next Step</a>
-      <button id="createProfileBtn" class="raised-button ink">Create Profile</button>
+      <button id="saveProfileBtn" class="raised-button ink">Save Profile</button>
     </div>
   </form>
 </div>

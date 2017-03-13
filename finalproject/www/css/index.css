@@ -47,7 +47,17 @@ body {
     -webkit-animation:fade 3000ms infinite;
 }
 
-.page-answer-questions label {
+/** ****************************************************************************
+  Changes to Foundation CSS
+  ************************************************************************** **/
+hr {
+  margin: 30px auto 15px auto;
+}
+
+/** ****************************************************************************
+  Page specific CSS
+  ************************************************************************** **/
+#page-answer-questions label {
   display: block;
   text-align: left;
   padding: 0 0 0 28px;

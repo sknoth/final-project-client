@@ -18,8 +18,10 @@
  */
 var app = {
 
-    cors_api_url: 'https://vukn-final-project.herokuapp.com/',
+    cors_api_url: 'http://localhost:8080/',
+    // cors_api_url: 'https://vukn-final-project.herokuapp.com/',
     currentUser: {},
+    questions: [],
 
     // Application Constructor
     initialize: function() {
@@ -33,6 +35,7 @@ var app = {
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
         document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
+        document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
     },
     // deviceready Event Handler
     //
@@ -44,12 +47,20 @@ var app = {
 
     onFacebookConnect: function() {
       console.log('onFacebookConnect');
-      app.doCORSRequest({
-        method: 'GET',
-        url: 'auth/facebook'
-      }, function printResult(result) {
-        console.log('onFacebookConnect result',result);
-      });
+
+            var x = new XMLHttpRequest();
+      x.open('GET', app.cors_api_url + 'auth/facebook', true);
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('onFacebookConnect success');
+              console.log(x.responseText);
+          }
+        }
+
+      x.send();
     },
 
     onSignUp: function() {
@@ -68,9 +79,38 @@ var app = {
               console.log(x.responseText);
               // console.log(x.responseText.passport.user);
               app.navigateTo('create-profile');
-              document.getElementById("createProfileBtn").addEventListener("click", app.onCreateProfile);
+              document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
 
               app.getUserData('58c424db6dc1810011757784');
+          }
+      }
+
+      x.send(JSON.stringify({
+        "email": document.getElementById("email").value,
+        "password": document.getElementById("password").value
+      }));
+
+    },
+
+    onSignIn: function() {
+      console.log('onSignIn');
+
+      var x = new XMLHttpRequest();
+
+      x.open('POST', app.cors_api_url + 'signin', true);
+      x.setRequestHeader("Content-type", "application/json");
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('success');
+              console.log(JSON.parse(x.responseText).passport.user);
+              // console.log(x.responseText.passport.user);
+              app.navigateTo('create-profile');
+              document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
+
+              app.getUserData(JSON.parse(x.responseText).passport.user);
           }
       }
 
@@ -92,7 +132,8 @@ var app = {
           if(x.readyState == 4 && x.status == 200) {
               // Request finished. Do processing here.
               console.log('getUserData success');
-              console.log(x.responseText);
+              app.currentUser = JSON.parse(x.responseText);
+              console.log(app.currentUser);
           }
       }
 
@@ -100,12 +141,12 @@ var app = {
 
     },
 
-    setUserData: function(uId) {
+    setUserData: function(callback) {
       console.log('setUserData');
 
       var x = new XMLHttpRequest();
 
-      x.open('POST', app.cors_api_url + 'users/' + uId, true);
+      x.open('POST', app.cors_api_url + 'users/' + app.currentUser._id, true);
 
       x.setRequestHeader("Content-type", "application/json");
 
@@ -115,21 +156,169 @@ var app = {
               // Request finished. Do processing here.
               console.log('setUserData success');
               console.log(x.responseText);
+              callback();
           }
       }
-console.log('app.currentUser', app.currentUser);
-      x.send(JSON.stringify({
-        "name": "meh",
-        "quote": "i wish"
-      }));
+      x.send(JSON.stringify({"user": app.currentUser}));
     },
 
-    onCreateProfile: function() {
-      console.log('onCreateProfile');
+    onSaveProfile: function() {
+      console.log('onSaveProfile');
       app.currentUser.name = document.getElementById("name").value;
+      app.currentUser.studyProgram = document.getElementById("studyProgram").value;
+      app.currentUser.country = document.getElementById("country").options[document.getElementById("country").selectedIndex].value;
+      app.currentUser.languages = app.getSelectValues(document.getElementById("languages"));
+      app.currentUser.interests = document.getElementById("interests").value;
       app.currentUser.quote = document.getElementById("quote").value;
 
-      app.setUserData('58c424db6dc1810011757784');
+      console.log('app.currentUser', app.currentUser);
+      app.setUserData(app.initPageAnswerQuestions);
+    },
+
+    // Return an array of the selected opion values
+    getSelectValues: function(select) {
+      var result = [];
+      var options = select && select.options;
+      var opt;
+
+      for (var i=0, iLen=options.length; i<iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+          result.push(opt.value || opt.text);
+        }
+      }
+      return result;
+    },
+
+    onSkip: function() {
+      console.log('onSkip');
+      app.navigateTo('profile');
+      document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+    },
+
+    onScanTag: function() {
+      console.log('TODO: initialize scanning of tags....');
+      app.navigateTo('scan-tag');
+      document.getElementById("dummyScanSuccessBtn").addEventListener("click", app.onDummyScanSuccess);
+    },
+
+    onDummyScanSuccess: function() {
+      app.navigateTo('scan-success');
+    },
+
+    initPageAnswerQuestions: function () {
+
+        console.log('initPageAnswerQuestions');
+        app.navigateTo('answer-questions');
+        document.getElementById("skipBtn").addEventListener("click", app.onSkip);
+        document.getElementById("nextQuestionBtn").addEventListener("click", app.onNextQuestion);
+
+        app.initQuestions();
+    },
+
+    initQuestions: function() {
+      console.log('initQuestions');
+
+      var x = new XMLHttpRequest();
+
+      x.open('GET', app.cors_api_url + 'questions', true);
+
+      x.onreadystatechange = function() {
+          //Call a function when the state changes.
+          if(x.readyState == 4 && x.status == 200) {
+              // Request finished. Do processing here.
+              console.log('getUserData success');
+              var questions = JSON.parse(x.responseText);
+
+              app.questions = questions;
+              app.questionId = 0;
+
+              app.paintQuestion(app.questionId);
+          }
+      }
+
+      x.send();
+    },
+
+    paintQuestion: function(qId) {
+
+      document.getElementById('hint-select-answer').style.display = 'none';
+
+      document.getElementById("questionKey").innerHTML = qId + 1;
+      document.getElementById("questionText").innerHTML = app.questions[qId].questionText;
+
+      var answersHTML = '';
+
+      for (key in app.questions[qId].answers) {
+        answersHTML += '<label data-answerid="' + key + '" class="radio"'
+                    + 'id="answer' +  + key + '">'
+                    + app.questions[qId].answers[key] + '</label>';
+      }
+
+      document.getElementById("answers").innerHTML = answersHTML;
+
+      for (answerKey in app.questions[qId].answers) {
+        document.getElementById("answer" + answerKey).addEventListener("click", app.fixRadioClick);
+      }
+
+      if (qId > 2) {
+        document.getElementById("skipBtn").style.display = 'inline-block';
+      }
+    },
+
+    // ugly hack to be able to contine for now....
+    fixRadioClick: function(a) {
+
+      document.getElementById('answer0').classList.contains('checked');
+        document.getElementById('answer0').classList.remove('checked');
+
+        document.getElementById('answer1').classList.contains('checked');
+      document.getElementById('answer1').classList.remove('checked');
+
+      document.getElementById('answer2').classList.contains('checked');
+      document.getElementById('answer2').classList.remove('checked');
+
+      document.getElementById('answer3').classList.contains('checked');
+      document.getElementById('answer3').classList.remove('checked');
+
+      this.classList.add('checked');
+      document.getElementById('nextQuestionBtn').dataset.answerid = this.dataset.answerid;
+    },
+
+    onNextQuestion: function() {
+      console.log('onNextQuestion');
+
+      // check if user has selected an answer
+      var hasSelectedAnswer = false;
+
+      for (key in document.querySelectorAll('[data-answerid]')) {
+        if (document.querySelectorAll('[data-answerid]')[key].classList &&
+            document.querySelectorAll('[data-answerid]')[key].classList.contains('checked')) {
+          hasSelectedAnswer = true;
+        }
+      }
+
+      if(!hasSelectedAnswer) {
+        document.getElementById('hint-select-answer').style.display = 'block';
+        return;
+      }
+
+      // add selected question and answer to questions of user
+      app.currentUser.questions.push({
+        'questionId': app.questionId,
+        'selectedAnswer': document.getElementById('nextQuestionBtn').dataset.answerid
+      })
+
+      // show next question
+      app.questionId++;
+      app.paintQuestion(app.questionId);
+
+      // if all questions were shown already, update user and go to next screen
+      if (app.questionId === 3) {
+
+      }
+
     },
 
     navigateTo: function(page) {
@@ -137,7 +326,8 @@ console.log('app.currentUser', app.currentUser);
       var htmlImport = document.getElementById(page).import.getElementById('page-' + page);
 
       document.body.innerHTML = '';
-
+      console.log('htmlImport');
+console.log(htmlImport);
       document.body.appendChild(htmlImport);
     }
 

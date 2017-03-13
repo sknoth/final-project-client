@@ -40,8 +40,11 @@
 
       <title>Friend Caching</title>
 
-      <link id="messages" rel="import" href="/imports/messages.html">
-      <link id="create-profile" rel="import" href="/imports/create-profile.html">
+      <link id="create-profile" rel="import" href="imports/create-profile.html">
+      <link id="answer-questions" rel="import" href="imports/answer-questions.html">
+      <link id="profile" rel="import" href="imports/profile.html">
+      <link id="scan-tag" rel="import" href="imports/scan-tag.html">
+      <link id="scan-success" rel="import" href="imports/scan-success.html">
 
       <link rel="stylesheet" type="text/css" href="css/material-foundation.css">
       <link rel="stylesheet" type="text/css" href="css/index.css">
@@ -49,8 +52,8 @@
     <body>
       <div class="page-signup">
         <div class="row column">
-        <h1 class="text-display-2">Friend Caching</h1>
-        <h1 class="text-headline">"Cache your friends and find treasures"</h1>
+        <h1 class="text-display-2 text-center">Friend Caching</h1>
+        <h1 class="text-headline text-center">"Cache your friends <br>and find treasures"</h1>
 
         <a onclick="app.onFacebookConnect()" class="raised-button ink">Facebook</a>
         <a href="/auth/twitter" class="raised-button ink"><span class="fa fa-twitter"></span> Twitter</a>
@@ -66,12 +69,12 @@
         </div>
         <div class="row column">
           <a id="signupBtn" class="raised-button ink">Sign Up</a>
+          <a id="signinBtn" class="flat-button ink">Sign In</a>
         </div>
       </div>
     </body>
 
     <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/webcomponents.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="js/material-foundation.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
 </html>
