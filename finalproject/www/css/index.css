@@ -64,6 +64,7 @@ hr {
   margin: 16px 0;
  }
 
+.page-signup .raised-accent-button,
 .page-signup .raised-button {
   width: 100%;
 }

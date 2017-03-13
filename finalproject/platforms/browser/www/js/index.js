@@ -18,9 +18,10 @@
  */
 var app = {
 
-    cors_api_url: 'http://localhost:8080/',
-    // cors_api_url: 'https://vukn-final-project.herokuapp.com/',
+    // cors_api_url: 'http://localhost:8080/',
+    cors_api_url: 'https://vukn-final-project.herokuapp.com/',
     currentUser: {},
+    currentFriend: {},
     questions: [],
 
     // Application Constructor
@@ -75,13 +76,13 @@ var app = {
           //Call a function when the state changes.
           if(x.readyState == 4 && x.status == 200) {
               // Request finished. Do processing here.
-              console.log('success');
+              console.log('sign up success');
               console.log(x.responseText);
-              // console.log(x.responseText.passport.user);
+
               app.navigateTo('create-profile');
               document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
 
-              app.getUserData('58c424db6dc1810011757784');
+              app.getUserData(JSON.parse(x.responseText).passport.user, app.setCurrentUser);
           }
       }
 
@@ -107,10 +108,10 @@ var app = {
               console.log('success');
               console.log(JSON.parse(x.responseText).passport.user);
               // console.log(x.responseText.passport.user);
-              app.navigateTo('create-profile');
-              document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
+              app.navigateTo('profile');
+              document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
 
-              app.getUserData(JSON.parse(x.responseText).passport.user);
+              app.getUserData(JSON.parse(x.responseText).passport.user, app.setCurrentUser, app.initPageProfile);
           }
       }
 
@@ -121,24 +122,41 @@ var app = {
 
     },
 
-    getUserData: function(uId) {
+    getUserData: function(uId, callback, callback2) {
       console.log('getUserData');
+
       var x = new XMLHttpRequest();
 
       x.open('GET', app.cors_api_url + 'users/' + uId, true);
 
       x.onreadystatechange = function() {
+
           //Call a function when the state changes.
           if(x.readyState == 4 && x.status == 200) {
-              // Request finished. Do processing here.
               console.log('getUserData success');
-              app.currentUser = JSON.parse(x.responseText);
-              console.log(app.currentUser);
+
+              if (typeof callback === 'function') {
+                callback(JSON.parse(x.responseText));
+              }
+
+              if (typeof callback2 === 'function') {
+                callback2(JSON.parse(x.responseText));
+              }
           }
       }
 
       x.send();
 
+    },
+
+    setCurrentUser: function(user) {
+      console.log('setCurrentUser');
+      app.currentUser = user;
+    },
+
+    setCurrentFriend: function(user) {
+      console.log('setCurrentFriend');
+      app.currentFriend = user;
     },
 
     setUserData: function(callback) {
@@ -162,8 +180,11 @@ var app = {
       x.send(JSON.stringify({"user": app.currentUser}));
     },
 
-    onSaveProfile: function() {
+    onSaveProfile: function(e) {
       console.log('onSaveProfile');
+
+      e.preventDefault();
+
       app.currentUser.name = document.getElementById("name").value;
       app.currentUser.studyProgram = document.getElementById("studyProgram").value;
       app.currentUser.country = document.getElementById("country").options[document.getElementById("country").selectedIndex].value;
@@ -171,7 +192,6 @@ var app = {
       app.currentUser.interests = document.getElementById("interests").value;
       app.currentUser.quote = document.getElementById("quote").value;
 
-      console.log('app.currentUser', app.currentUser);
       app.setUserData(app.initPageAnswerQuestions);
     },
 
@@ -191,27 +211,82 @@ var app = {
       return result;
     },
 
-    onSkip: function() {
-      console.log('onSkip');
+    onShowFriendProfile: function() {
+      console.log('onShowFriendProfile');
       app.navigateTo('profile');
       document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+      app.initPageProfile(app.currentFriend);
+
+      document.getElementById("askQuestionBtn").style.display = 'block';
+      document.getElementById("scanTagBtn").style.display = 'none';
+    },
+
+    onToProfile: function() {
+      console.log('onToProfile');
+      app.navigateTo('profile');
+      document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+      app.initPageProfile(app.currentUser);
+    },
+
+    initPageProfile: function(user) {
+      console.log('initPageProfile');
+      console.log(user);
+
+      document.getElementById("name").innerHTML = user.name;
+      document.getElementById("points").innerHTML = user.points;
+      document.getElementById("study-program").innerHTML = user.studyProgram;
+      document.getElementById("country").innerHTML = user.country;
+      document.getElementById("languages").innerHTML = user.languages;
+      document.getElementById("interests").innerHTML = user.interests;
+      document.getElementById("quote").innerHTML = user.quote;
+
+      document.getElementById("askQuestionBtn").style.display = 'none';
+      document.getElementById("scanTagBtn").style.display = 'block';
     },
 
     onScanTag: function() {
       console.log('TODO: initialize scanning of tags....');
+
       app.navigateTo('scan-tag');
       document.getElementById("dummyScanSuccessBtn").addEventListener("click", app.onDummyScanSuccess);
     },
 
     onDummyScanSuccess: function() {
       app.navigateTo('scan-success');
+
+      document.getElementById("showFriendProfileBtn").addEventListener("click", app.onShowFriendProfile);
+      document.getElementById("askQuestionBtn").addEventListener("click", app.onAskQuestion);
+
+      // Dummy User 1 "Ima User"
+      app.getUserData('58c70a1b6acb472718fd5b23', app.setCurrentFriend);
+    },
+
+    // asking the current friend a question
+    onAskQuestion: function() {
+      console.log('onAskQuestion');
+
+      app.navigateTo('answer-questions');
+
+      document.getElementById("nextQuestionBtn").style.display = 'none';
+      document.getElementById("checkAnswerBtn").style.display = 'block';
+      document.getElementById("hint-answer-questions").style.display = 'none';
+
+      document.getElementById("toProfileBtn").addEventListener("click", app.onToProfile);
+      document.getElementById("checkAnswerBtn").addEventListener("click", app.onCheckAnswer);
+
+      app.initQuestions();
     },
 
     initPageAnswerQuestions: function () {
-
         console.log('initPageAnswerQuestions');
+
         app.navigateTo('answer-questions');
-        document.getElementById("skipBtn").addEventListener("click", app.onSkip);
+
+        document.getElementById("nextQuestionBtn").style.display = 'block';
+        document.getElementById("checkAnswerBtn").style.display = 'none';
+        document.getElementById("hint-answer-questions").style.display = 'block';
+
+        document.getElementById("toProfileBtn").addEventListener("click", app.onToProfile);
         document.getElementById("nextQuestionBtn").addEventListener("click", app.onNextQuestion);
 
         app.initQuestions();
@@ -225,10 +300,11 @@ var app = {
       x.open('GET', app.cors_api_url + 'questions', true);
 
       x.onreadystatechange = function() {
+
           //Call a function when the state changes.
           if(x.readyState == 4 && x.status == 200) {
-              // Request finished. Do processing here.
-              console.log('getUserData success');
+              console.log('initQuestions success');
+
               var questions = JSON.parse(x.responseText);
 
               app.questions = questions;
@@ -263,7 +339,7 @@ var app = {
       }
 
       if (qId > 2) {
-        document.getElementById("skipBtn").style.display = 'inline-block';
+        document.getElementById("toProfileBtn").style.display = 'inline-block';
       }
     },
 
@@ -283,24 +359,29 @@ var app = {
       document.getElementById('answer3').classList.remove('checked');
 
       this.classList.add('checked');
+      app.hasSelectedAnswer = true;
       document.getElementById('nextQuestionBtn').dataset.answerid = this.dataset.answerid;
     },
 
     onNextQuestion: function() {
       console.log('onNextQuestion');
 
-      // check if user has selected an answer
-      var hasSelectedAnswer = false;
-
-      for (key in document.querySelectorAll('[data-answerid]')) {
-        if (document.querySelectorAll('[data-answerid]')[key].classList &&
-            document.querySelectorAll('[data-answerid]')[key].classList.contains('checked')) {
-          hasSelectedAnswer = true;
-        }
+      if(!app.hasSelectedAnswer) {
+        document.getElementById('hint-select-answer').style.display = 'block';
+        return;
       }
 
-      if(!hasSelectedAnswer) {
-        document.getElementById('hint-select-answer').style.display = 'block';
+      app.hasSelectedAnswer = false;
+
+      // if all questions were shown already, update user and go to next screen
+      if (app.questionId === 3) {
+
+        app.navigateTo('profile');
+
+        document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+
+        app.initPageProfile(app.currentUser);
+
         return;
       }
 
@@ -308,27 +389,43 @@ var app = {
       app.currentUser.questions.push({
         'questionId': app.questionId,
         'selectedAnswer': document.getElementById('nextQuestionBtn').dataset.answerid
-      })
+      });
+      console.log(111,app.currentUser.questions);
 
-      // show next question
+      app.setUserData();
+
+      // potentially dangerous, we should wait for req to finish...
       app.questionId++;
       app.paintQuestion(app.questionId);
 
+    },
+
+    onCheckAnswer: function() {
+      console.log('onCheckAnswer');
+
       // if all questions were shown already, update user and go to next screen
       if (app.questionId === 3) {
-
+        app.navigateTo('come-back-tomorrow');
+        return;
       }
 
+      // find selected questionid in questions of user
+
+        // check if answers match
+
+        // if not show error, set noPoint flag
+        // return
+
+        // if yes add a point
     },
 
     navigateTo: function(page) {
       console.log('navigateTo: ', page);
+
       var htmlImport = document.getElementById(page).import.getElementById('page-' + page);
 
       document.body.innerHTML = '';
-      console.log('htmlImport');
-console.log(htmlImport);
-      document.body.appendChild(htmlImport);
+      document.body.appendChild(htmlImport.cloneNode(true));
     }
 
 };
