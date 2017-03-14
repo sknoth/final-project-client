@@ -42,27 +42,86 @@ var app = {
       // do something only after device is ready
       document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
       document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
+
+      window.fbAsyncInit = function() {
+
+          if (window.cordova.platformId === "browser") {
+             facebookConnectPlugin.browserInit('1770965719839075');
+          }
+      }
+
+
     },
 
     onFacebookConnect: function(e) {
-      e.preventDefault();
       console.log('onFacebookConnect');
-// window.location = 'http://localhost:8080/auth/facebook';
 
-  console.log('meeeeeeh');
-      //       var x = new XMLHttpRequest();
-      // x.open('GET', app.cors_api_url + 'auth/facebook', true);
-      //
-      // x.onreadystatechange = function() {
-      //     //Call a function when the state changes.
-      //     if(x.readyState == 4 && x.status == 200) {
-      //         // Request finished. Do processing here.
-      //         console.log('onFacebookConnect success');
-      //         console.log(x.responseText);
-      //     }
-      //   }
-      //
-      // x.send();
+      var newUser = {};
+
+      facebookConnectPlugin.login(["public_profile"],
+          function (userData) {
+            console.log('success',userData);
+            console.log('success',newUser);
+
+            newUser = {
+              facebook: {
+                id: userData.authResponse.userID,
+                token: userData.authResponse.accessToken
+              }
+            };
+
+            facebookConnectPlugin.api('/me?fields=email', ["email"], function(apiResponse) {
+                console.log('1 apiResponse',apiResponse);
+
+
+                newUser.facebook.token = apiResponse.email;
+
+
+                var x = new XMLHttpRequest();
+
+                x.open('POST', app.cors_api_url + 'users', true);
+                x.setRequestHeader("Content-type", "application/json");
+
+                x.onreadystatechange = function() {
+                    //Call a function when the state changes.
+                    if(x.readyState == 4 && x.status == 200) {
+                        // Request finished. Do processing here.
+                        console.log('success');
+
+                        if(JSON.parse(x.responseText).new) {
+
+                          app.navigateTo('create-profile');
+
+                          document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
+
+                          app.getUserData(
+                            JSON.parse(x.responseText).passport.user,
+                            app.setCurrentUser
+                          );
+
+                        } else {
+                          app.getUserData(
+                            JSON.parse(x.responseText).user,
+                            app.setCurrentUser,
+                            app.initPageProfile
+                          );
+                        }
+                    }
+                }
+console.log('NEWUSER', newUser);
+                x.send(JSON.stringify({
+                  "id": newUser.facebook.id,
+                  "facebook": newUser.facebook
+                }));
+
+
+                },function(error){
+                    console.log('1 error',error);
+                }); //end api
+          },
+          function (error) { console.log(error); }
+      );
+
     },
 
     onSignUp: function() {
