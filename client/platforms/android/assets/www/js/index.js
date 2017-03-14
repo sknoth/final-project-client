@@ -42,39 +42,37 @@ var app = {
       document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
       document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
 
+      // document.getElementById("facebookConnectBtn").addEventListener("click", app.onFacebookConnect);
+      //
       // window.fbAsyncInit = function() {
       //
       //     if (window.cordova.platformId === "browser") {
       //        facebookConnectPlugin.browserInit('1770965719839075');
       //     }
       // }
-
-
     },
+
+    // onFacebookConnect: function(e) {
+    //   console.log('onFacebookConnect');
 //
-//     onFacebookConnect: function(e) {
-//       console.log('onFacebookConnect');
-//
-//       var newUser = {};
-//
-//       facebookConnectPlugin.login(["public_profile"],
-//           function (userData) {
-//             console.log('success',userData);
-//             console.log('success',newUser);
-//
-//             newUser = {
-//               facebook: {
-//                 id: userData.authResponse.userID,
-//                 token: userData.authResponse.accessToken
-//               }
-//             };
+      // var newUser = {};
+      //
+      // facebookConnectPlugin.login(["public_profile"],
+      //     function (userData) {
+      //       console.log('success');
+      //       console.log('success',userData);
+      //
+      //       newUser = {
+      //         facebook: {
+      //           id: userData.authResponse.userID,
+      //           token: userData.authResponse.accessToken
+      //         }
+      //       };
 //
 //             facebookConnectPlugin.api('/me?fields=email', ["email"], function(apiResponse) {
 //                 console.log('1 apiResponse',apiResponse);
 //
-//
 //                 newUser.facebook.token = apiResponse.email;
-//
 //
 //                 var x = new XMLHttpRequest();
 //
@@ -113,15 +111,14 @@ var app = {
 //                   "facebook": newUser.facebook
 //                 }));
 //
-//
 //                 },function(error){
 //                     console.log('1 error',error);
 //                 }); //end api
 //           },
 //           function (error) { console.log(error); }
 //       );
-//
-//     },
+// },
+
 
     onSignUp: function() {
       console.log('onSignUp');

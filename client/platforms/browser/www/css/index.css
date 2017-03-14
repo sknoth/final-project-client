@@ -68,6 +68,7 @@ hr {
 .page-signup .raised-button {
   width: 100%;
 }
+.page-signup .raised-button.fb { background: #365899; }
 
 .alert-full {
   position: absolute;
