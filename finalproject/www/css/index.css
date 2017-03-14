@@ -68,3 +68,17 @@ hr {
 .page-signup .raised-button {
   width: 100%;
 }
+
+.alert-full {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+}
+
+.alert-success {
+  background: #c2fb8e;
+  padding: 60px 30px;
+  text-align: center;
+}

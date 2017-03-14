@@ -18,8 +18,8 @@
  */
 var app = {
 
-    // cors_api_url: 'http://localhost:8080/',
-    cors_api_url: 'https://vukn-final-project.herokuapp.com/',
+    cors_api_url: 'http://localhost:8080/',
+    // cors_api_url: 'https://vukn-final-project.herokuapp.com/',
     currentUser: {},
     currentFriend: {},
     questions: [],
@@ -35,33 +35,34 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
-        document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
     },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
+
+    // Now safe to use device APIs
     onDeviceReady: function() {
-        // do something only after device is ready
+      // do something only after device is ready
+      document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
+      document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
     },
 
-    onFacebookConnect: function() {
+    onFacebookConnect: function(e) {
+      e.preventDefault();
       console.log('onFacebookConnect');
+// window.location = 'http://localhost:8080/auth/facebook';
 
-            var x = new XMLHttpRequest();
-      x.open('GET', app.cors_api_url + 'auth/facebook', true);
-
-      x.onreadystatechange = function() {
-          //Call a function when the state changes.
-          if(x.readyState == 4 && x.status == 200) {
-              // Request finished. Do processing here.
-              console.log('onFacebookConnect success');
-              console.log(x.responseText);
-          }
-        }
-
-      x.send();
+  console.log('meeeeeeh');
+      //       var x = new XMLHttpRequest();
+      // x.open('GET', app.cors_api_url + 'auth/facebook', true);
+      //
+      // x.onreadystatechange = function() {
+      //     //Call a function when the state changes.
+      //     if(x.readyState == 4 && x.status == 200) {
+      //         // Request finished. Do processing here.
+      //         console.log('onFacebookConnect success');
+      //         console.log(x.responseText);
+      //     }
+      //   }
+      //
+      // x.send();
     },
 
     onSignUp: function() {
@@ -88,7 +89,8 @@ var app = {
 
       x.send(JSON.stringify({
         "email": document.getElementById("email").value,
-        "password": document.getElementById("password").value
+        "password": document.getElementById("password").value,
+        "points": 5 // points for signup
       }));
 
     },
@@ -108,8 +110,8 @@ var app = {
               console.log('success');
               console.log(JSON.parse(x.responseText).passport.user);
               // console.log(x.responseText.passport.user);
-              app.navigateTo('profile');
-              document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+              // app.navigateTo('profile');
+              // document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
 
               app.getUserData(JSON.parse(x.responseText).passport.user, app.setCurrentUser, app.initPageProfile);
           }
@@ -174,7 +176,10 @@ var app = {
               // Request finished. Do processing here.
               console.log('setUserData success');
               console.log(x.responseText);
-              callback();
+
+              if (typeof callback === 'function') {
+                callback();
+              }
           }
       }
       x.send(JSON.stringify({"user": app.currentUser}));
@@ -213,8 +218,6 @@ var app = {
 
     onShowFriendProfile: function() {
       console.log('onShowFriendProfile');
-      app.navigateTo('profile');
-      document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
       app.initPageProfile(app.currentFriend);
 
       document.getElementById("askQuestionBtn").style.display = 'block';
@@ -223,14 +226,15 @@ var app = {
 
     onToProfile: function() {
       console.log('onToProfile');
-      app.navigateTo('profile');
-      document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
       app.initPageProfile(app.currentUser);
     },
 
     initPageProfile: function(user) {
       console.log('initPageProfile');
       console.log(user);
+
+      app.navigateTo('profile');
+      document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
 
       document.getElementById("name").innerHTML = user.name;
       document.getElementById("points").innerHTML = user.points;
@@ -267,9 +271,10 @@ var app = {
 
       app.navigateTo('answer-questions');
 
+      document.getElementById("points-text").style.display = 'block';
+      document.getElementById("hint-answer-questions").style.display = 'none';
       document.getElementById("nextQuestionBtn").style.display = 'none';
       document.getElementById("checkAnswerBtn").style.display = 'block';
-      document.getElementById("hint-answer-questions").style.display = 'none';
 
       document.getElementById("toProfileBtn").addEventListener("click", app.onToProfile);
       document.getElementById("checkAnswerBtn").addEventListener("click", app.onCheckAnswer);
@@ -282,9 +287,10 @@ var app = {
 
         app.navigateTo('answer-questions');
 
+        document.getElementById("points-text").style.display = 'none';
+        document.getElementById("hint-answer-questions").style.display = 'block';
         document.getElementById("nextQuestionBtn").style.display = 'block';
         document.getElementById("checkAnswerBtn").style.display = 'none';
-        document.getElementById("hint-answer-questions").style.display = 'block';
 
         document.getElementById("toProfileBtn").addEventListener("click", app.onToProfile);
         document.getElementById("nextQuestionBtn").addEventListener("click", app.onNextQuestion);
@@ -308,6 +314,8 @@ var app = {
               var questions = JSON.parse(x.responseText);
 
               app.questions = questions;
+
+              // TODO: randomize questions order
               app.questionId = 0;
 
               app.paintQuestion(app.questionId);
@@ -318,8 +326,15 @@ var app = {
     },
 
     paintQuestion: function(qId) {
+      console.log('initQuestions');
 
+      document.getElementById("correct-answer").style.display = 'none';
       document.getElementById('hint-select-answer').style.display = 'none';
+      document.getElementById("hint-correct-answer").style.display = 'none';
+      document.getElementById("hint-correct-answer-2nd-try").style.display = 'none';
+
+      document.getElementById('nextQuestionBtn').dataset.answerid = null;
+      document.getElementById('checkAnswerBtn').dataset.answerid = null;
 
       document.getElementById("questionKey").innerHTML = qId + 1;
       document.getElementById("questionText").innerHTML = app.questions[qId].questionText;
@@ -347,9 +362,9 @@ var app = {
     fixRadioClick: function(a) {
 
       document.getElementById('answer0').classList.contains('checked');
-        document.getElementById('answer0').classList.remove('checked');
+      document.getElementById('answer0').classList.remove('checked');
 
-        document.getElementById('answer1').classList.contains('checked');
+      document.getElementById('answer1').classList.contains('checked');
       document.getElementById('answer1').classList.remove('checked');
 
       document.getElementById('answer2').classList.contains('checked');
@@ -361,6 +376,7 @@ var app = {
       this.classList.add('checked');
       app.hasSelectedAnswer = true;
       document.getElementById('nextQuestionBtn').dataset.answerid = this.dataset.answerid;
+      document.getElementById('checkAnswerBtn').dataset.answerid = this.dataset.answerid;
     },
 
     onNextQuestion: function() {
@@ -376,10 +392,6 @@ var app = {
       // if all questions were shown already, update user and go to next screen
       if (app.questionId === 3) {
 
-        app.navigateTo('profile');
-
-        document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
-
         app.initPageProfile(app.currentUser);
 
         return;
@@ -392,6 +404,7 @@ var app = {
       });
       console.log(111,app.currentUser.questions);
 
+      // updating userdata after each question because user can step out at any point
       app.setUserData();
 
       // potentially dangerous, we should wait for req to finish...
@@ -403,20 +416,48 @@ var app = {
     onCheckAnswer: function() {
       console.log('onCheckAnswer');
 
+      // find selected questionid in questions of user
+      var friendAnswer = app.currentFriend.questions[app.questionId].selectedAnswer;
+      var userAnswer = document.getElementById('checkAnswerBtn').dataset.answerid;
+console.log(friendAnswer, userAnswer);
+      // check if answers match
+      if (friendAnswer !== userAnswer) {
+        console.log('friendAnswer !== userAnswer');
+        document.getElementById('hint-wrong-answer').style.display = 'block';
+        app.dontAddPoint = true;
+        return;
+      }
+console.log(1);
+      if (friendAnswer === userAnswer && app.dontAddPoint) {
+        console.log('!friendAnswer === userAnswer && app.dontAddPoint');
+        document.getElementById("hint-correct-answer-2nd-try").style.display = 'block';
+      } else {
+        document.getElementById("hint-correct-answer").style.display = 'block';
+        app.currentUser.points++;
+        app.setUserData(); // only updating userdata when something changed
+      }
+      document.getElementById("correct-answer").style.display = 'block';
+      // need to add the listener here, because it does not like hidden elements...
+      if (!app.successNexWuestionListener) {
+        document.getElementById("onSuccessNextQuestionBtn").addEventListener("click", app.onSuccessNextQuestion);
+        app.successNexWuestionListener = true;
+      }
+    },
+
+    onSuccessNextQuestion: function() {
+
       // if all questions were shown already, update user and go to next screen
       if (app.questionId === 3) {
         app.navigateTo('come-back-tomorrow');
+                document.getElementById("toProfileBtn").addEventListener("click", app.onToProfile);
         return;
       }
 
-      // find selected questionid in questions of user
-
-        // check if answers match
-
-        // if not show error, set noPoint flag
-        // return
-
-        // if yes add a point
+      document.getElementById("hint-wrong-answer").style.display = 'none';
+      document.getElementById("hint-correct-answer").style.display = 'none';
+      document.getElementById("hint-correct-answer-2nd-try").style.display = 'none';
+      app.questionId++;
+      app.paintQuestion(app.questionId);
     },
 
     navigateTo: function(page) {
