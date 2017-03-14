@@ -60,11 +60,6 @@
         },
         "cordova-plugin-vibration": {
             "PACKAGE_NAME": "com.phonegap.helloworld"
-        },
-        "phonegap-facebook-plugin": {
-            "APP_ID": "1770965719839075",
-            "APP_NAME": "oauthApp",
-            "PACKAGE_NAME": "com.phonegap.helloworld"
         }
     },
     "dependent_plugins": {

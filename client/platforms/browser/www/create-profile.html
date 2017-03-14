@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <link id="app" rel="import" href="/imports/app.html">
+        <link rel="stylesheet" type="text/css" href="css/material-foundation.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+    </head>
+    <body>
+      <h2 class="text-display-1">Profileq</h2>
+
+      <div class="row column">
+        <input type="text" id="name" class="with-floating-label" required="">
+        <label for="email" class="floating-label">My name is:</label>
+      </div>
+      <div class="row column">
+        <input type="text" id="name" class="with-floating-label" required="">
+        <label for="email" class="floating-label">I study:</label>
+      </div>
+      <div class="row column">
+        <label>Select Country</label>
+        <select>
+          <option value="husker">Afghanistan</option>
+          <option value="starbuck">Bahamas</option>
+          <option value="hotdog">Cambodia</option>
+          <option value="hotdog">Denmark</option>
+          <option value="apollo">East Timor</option>
+          <option value="hotdog">Falkland Islands (malvinas)</option>
+          <option value="hotdog">Gabon</option>
+          <option value="hotdog">Haiti</option>
+          <option value="hotdog">Iceland</option>
+          <option value="hotdog">Jamaica</option>
+          <option value="hotdog">Kazakhstan</option>
+          <option value="hotdog">Lao People's Democratic Republic</option>
+          <option value="hotdog">Macao</option>
+        </select>
+      </div>
+      <div class="row column">
+
+    	</div>
+      <div class="row column">
+        <label>Multiple Select Menu</label>
+          <select multiple>
+            <option value="showboat">Showboat</option>
+            <option value="redwing">Redwing</option>
+            <option value="narcho">Narcho</option>
+            <option value="hardball">Hardball</option>
+          </select>
+      </div>
+      <div class="row column">
+        <label>Im interested in:</label>
+        <textarea placeholder="for example: cooking..."></textarea>
+      </div>
+      <div class="row column">
+        <label>A quote I like:</label>
+        <textarea placeholder="Don't worry - be happy!"></textarea>
+      </div>
+      <div class="row column">
+        <a href="answer-questions.html" class="raised-button ink">Next Step</a>
+      </div>
+
+      <script type="text/javascript" src="js/material-foundation.js"></script>
+    </body>
+
+
+    <script>
+      var headElements = document.getElementById('app').import.childNodes[2].childNodes[0].childNodes;
+
+      for (el in headElements) {
+        console.log(headElements[el]);
+        document.head.appendChild(headElements[el]);
+      }
+
+      document.head.appendChild(htmlDoc);
+    </script>
+</html>

@@ -83,30 +83,6 @@
                         {
                             "xml": "<feature name=\"Vibration\"><param name=\"android-package\" value=\"org.apache.cordova.vibration.Vibration\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"FacebookConnectPlugin\"><param name=\"android-package\" value=\"org.apache.cordova.facebook.ConnectPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://m.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://graph.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://api.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://*.fbcdn.net\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://*.akamaihd.net\" />",
-                            "count": 1
                         }
                     ]
                 }
@@ -163,14 +139,6 @@
                         {
                             "xml": "<provider android:authorities=\"${applicationId}.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"android.support.v4.content.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/provider_paths\" /></provider>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<meta-data android:name=\"com.facebook.sdk.ApplicationId\" android:value=\"@string/fb_app_id\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<activity android:label=\"@string/fb_app_name\" android:name=\"com.facebook.LoginActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar\" />",
-                            "count": 1
                         }
                     ],
                     "/manifest": [
@@ -178,21 +146,13 @@
                             "xml": "<uses-permission android:name=\"android.permission.VIBRATE\" />",
                             "count": 1
                         }
-                    ]
+                    ],
+                    "/manifest/application": []
                 }
             },
             "res/values/facebookconnect.xml": {
                 "parents": {
-                    "/*": [
-                        {
-                            "xml": "<string name=\"fb_app_id\">1770965719839075</string>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<string name=\"fb_app_name\">oauthApp</string>",
-                            "count": 1
-                        }
-                    ]
+                    "/*": []
                 }
             }
         }
@@ -256,11 +216,6 @@
             "PACKAGE_NAME": "com.phonegap.helloworld"
         },
         "cordova-plugin-vibration": {
-            "PACKAGE_NAME": "com.phonegap.helloworld"
-        },
-        "phonegap-facebook-plugin": {
-            "APP_ID": "1770965719839075",
-            "APP_NAME": "oauthApp",
             "PACKAGE_NAME": "com.phonegap.helloworld"
         }
     },
@@ -774,14 +729,6 @@
                 "navigator.notification",
                 "navigator"
             ]
-        },
-        {
-            "id": "phonegap-facebook-plugin.FacebookConnectPlugin",
-            "file": "plugins/phonegap-facebook-plugin/facebookConnectPlugin.js",
-            "pluginId": "phonegap-facebook-plugin",
-            "clobbers": [
-                "facebookConnectPlugin"
-            ]
         }
     ],
     "plugin_metadata": {
@@ -804,7 +751,6 @@
         "cordova-plugin-network-information": "1.2.1",
         "cordova-plugin-splashscreen": "3.2.2",
         "cordova-plugin-statusbar": "2.1.3",
-        "cordova-plugin-vibration": "2.1.4",
-        "phonegap-facebook-plugin": "0.12.0"
+        "cordova-plugin-vibration": "2.1.4"
     }
 }

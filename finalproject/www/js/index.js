@@ -17,7 +17,6 @@
  * under the License.
  */
 var app = {
-
     cors_api_url: 'http://localhost:8080/',
     // cors_api_url: 'https://vukn-final-project.herokuapp.com/',
     currentUser: {},
@@ -43,86 +42,86 @@ var app = {
       document.getElementById("signupBtn").addEventListener("click", app.onSignUp);
       document.getElementById("signinBtn").addEventListener("click", app.onSignIn);
 
-      window.fbAsyncInit = function() {
-
-          if (window.cordova.platformId === "browser") {
-             facebookConnectPlugin.browserInit('1770965719839075');
-          }
-      }
+      // window.fbAsyncInit = function() {
+      //
+      //     if (window.cordova.platformId === "browser") {
+      //        facebookConnectPlugin.browserInit('1770965719839075');
+      //     }
+      // }
 
 
     },
-
-    onFacebookConnect: function(e) {
-      console.log('onFacebookConnect');
-
-      var newUser = {};
-
-      facebookConnectPlugin.login(["public_profile"],
-          function (userData) {
-            console.log('success',userData);
-            console.log('success',newUser);
-
-            newUser = {
-              facebook: {
-                id: userData.authResponse.userID,
-                token: userData.authResponse.accessToken
-              }
-            };
-
-            facebookConnectPlugin.api('/me?fields=email', ["email"], function(apiResponse) {
-                console.log('1 apiResponse',apiResponse);
-
-
-                newUser.facebook.token = apiResponse.email;
-
-
-                var x = new XMLHttpRequest();
-
-                x.open('POST', app.cors_api_url + 'users', true);
-                x.setRequestHeader("Content-type", "application/json");
-
-                x.onreadystatechange = function() {
-                    //Call a function when the state changes.
-                    if(x.readyState == 4 && x.status == 200) {
-                        // Request finished. Do processing here.
-                        console.log('success');
-
-                        if(JSON.parse(x.responseText).new) {
-
-                          app.navigateTo('create-profile');
-
-                          document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
-
-                          app.getUserData(
-                            JSON.parse(x.responseText).passport.user,
-                            app.setCurrentUser
-                          );
-
-                        } else {
-                          app.getUserData(
-                            JSON.parse(x.responseText).user,
-                            app.setCurrentUser,
-                            app.initPageProfile
-                          );
-                        }
-                    }
-                }
-console.log('NEWUSER', newUser);
-                x.send(JSON.stringify({
-                  "id": newUser.facebook.id,
-                  "facebook": newUser.facebook
-                }));
-
-
-                },function(error){
-                    console.log('1 error',error);
-                }); //end api
-          },
-          function (error) { console.log(error); }
-      );
-
-    },
+//
+//     onFacebookConnect: function(e) {
+//       console.log('onFacebookConnect');
+//
+//       var newUser = {};
+//
+//       facebookConnectPlugin.login(["public_profile"],
+//           function (userData) {
+//             console.log('success',userData);
+//             console.log('success',newUser);
+//
+//             newUser = {
+//               facebook: {
+//                 id: userData.authResponse.userID,
+//                 token: userData.authResponse.accessToken
+//               }
+//             };
+//
+//             facebookConnectPlugin.api('/me?fields=email', ["email"], function(apiResponse) {
+//                 console.log('1 apiResponse',apiResponse);
+//
+//
+//                 newUser.facebook.token = apiResponse.email;
+//
+//
+//                 var x = new XMLHttpRequest();
+//
+//                 x.open('POST', app.cors_api_url + 'users', true);
+//                 x.setRequestHeader("Content-type", "application/json");
+//
+//                 x.onreadystatechange = function() {
+//                     //Call a function when the state changes.
+//                     if(x.readyState == 4 && x.status == 200) {
+//                         // Request finished. Do processing here.
+//                         console.log('success');
+//
+//                         if(JSON.parse(x.responseText).new) {
+//
+//                           app.navigateTo('create-profile');
+//
+//                           document.getElementById("saveProfileBtn").addEventListener("click", app.onSaveProfile);
+//
+//                           app.getUserData(
+//                             JSON.parse(x.responseText).passport.user,
+//                             app.setCurrentUser
+//                           );
+//
+//                         } else {
+//                           app.getUserData(
+//                             JSON.parse(x.responseText).user,
+//                             app.setCurrentUser,
+//                             app.initPageProfile
+//                           );
+//                         }
+//                     }
+//                 }
+// console.log('NEWUSER', newUser);
+//                 x.send(JSON.stringify({
+//                   "id": newUser.facebook.id,
+//                   "facebook": newUser.facebook
+//                 }));
+//
+//
+//                 },function(error){
+//                     console.log('1 error',error);
+//                 }); //end api
+//           },
+//           function (error) { console.log(error); }
+//       );
+//
+//     },
 
     onSignUp: function() {
       console.log('onSignUp');
@@ -294,6 +293,7 @@ console.log('NEWUSER', newUser);
 
       app.navigateTo('profile');
       document.getElementById("scanTagBtn").addEventListener("click", app.onScanTag);
+      document.getElementById("askQuestionBtn").addEventListener("click", app.onAskQuestion);
 
       document.getElementById("name").innerHTML = user.name;
       document.getElementById("points").innerHTML = user.points;
@@ -309,9 +309,20 @@ console.log('NEWUSER', newUser);
 
     onScanTag: function() {
       console.log('TODO: initialize scanning of tags....');
+      // app.navigateTo('scan-tag');
+      // document.getElementById("dummyScanSuccessBtn").addEventListener("click", app.onDummyScanSuccess);
 
-      app.navigateTo('scan-tag');
-      document.getElementById("dummyScanSuccessBtn").addEventListener("click", app.onDummyScanSuccess);
+      cordova.plugins.barcodeScanner.scan(
+     function (result) {
+         alert("A barcode has been scanned \n" +
+               "Result: " + result.text + "\n" +
+               "Format: " + result.format + "\n" +
+               "Cancelled: " + result.cancelled);
+     },
+     function (error) {
+         alert("Scanning failed: " + error);
+     }
+);
     },
 
     onDummyScanSuccess: function() {

@@ -1,0 +1,31 @@
+<div id="page-answer-questions" class="row column">
+  <h1 class="text-display-1">Answer Questions</h1>
+  <p id="points-text">Your points: <span id="user-points"></span></p>
+  <p id="hint-answer-questions" class="message">Answer at least 3 out of 40 questions to start playing</p>
+  <hr>
+
+  <h2 class="headline">
+    <b>Question <span id="questionKey">1</span></b>:
+    <span id="questionText">If you had a superpower which one would you choose?</span>
+  </h2>
+
+  <p id="hint-select-answer" class="message" style="display:none;">Please select an answer!</p>
+  <p id="hint-wrong-answer" class="message" style="display:none;">Wrong Answer! You loose a point. Try again.</p>
+
+  <div class="row column">
+    <div id="answers"></div>
+  </div>
+  <hr>
+  <div class="row column">
+    <a id="toProfileBtn" class="flat-button ink" style="display: none;">to Profile</a>
+    <a id="nextQuestionBtn" class="raised-button ink">Next Question</a>
+    <a id="checkAnswerBtn" class="raised-button ink">Check Answer</a>
+  </div>
+  <div id="correct-answer" class="alert-full alert-success" style="display: none;">
+    <h1 class="text-display-1">Yes! That was correct!!</h1>
+    <p id="hint-correct-answer" class="message" style="display:none;">You get <b>1 point</b> :)</p>
+    <p id="hint-correct-answer-2nd-try" class="message" style="display:none;">Sorry, no point :(</p>
+    <br><br>
+    <a id="onSuccessNextQuestionBtn" class="raised-button ink">Next Question</a>
+  </div>
+</div>
